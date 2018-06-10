@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+<<<<<<< 64e2fa5e6eab97dbf8f6cbba5b1dea1bca23e1ba
+
+# Pycharm ide settings
+.idea/
