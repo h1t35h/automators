@@ -1,6 +1,6 @@
 import logging
 
-from transitions import Machine
+from transitions.extensions import LockedMachine as Machine
 
 import player_module
 from machines import states, triggers
@@ -20,7 +20,8 @@ class MusicMachine(object):
         self.machine.add_transition(trigger=triggers.MOBILE_CONNECTED, source=states.MOBILE_DISCONNECTED,
                                     dest=states.MOBILE_CONNECTED, before='trigger_device_connection')
 
-        self.machine.add_transition(trigger=triggers.MOBILE_DISCONNECTED, source=states.MOBILE_CONNECTED,
+        self.machine.add_transition(trigger=triggers.MOBILE_DISCONNECTED,
+                                    source=[states.MOBILE_CONNECTED, states.PLAYING],
                                     dest=states.MOBILE_DISCONNECTED, before='trigger_device_disconnect')
 
         self.machine.add_transition(trigger=triggers.MOBILE_CONNECTED, source=states.MOBILE_CONNECTED,
@@ -32,11 +33,17 @@ class MusicMachine(object):
         self.machine.add_transition(trigger=triggers.MOBILE_DISCONNECTED, source=states.MOBILE_DISCONNECTED,
                                     dest=states.MOBILE_DISCONNECTED)
 
+        self.machine.add_transition(trigger=triggers.MOBILE_DISCONNECTED, source=states.MANUALLY_PAUSED,
+                                    dest=states.MANUALLY_PAUSED)
+
         self.machine.add_transition(trigger=triggers.MOBILE_DISCONNECTED, source=states.PLAYING,
                                     dest=states.MOBILE_DISCONNECTED, before='trigger_device_disconnect')
 
+        self.machine.add_transition(trigger=triggers.MANUAL_PLAY, source=MusicMachine.states, dest=states.PLAYING,
+                                    before='trigger_device_connection')
+
         self.machine.add_transition(trigger=triggers.MANUAL_PAUSE, source=MusicMachine.states,
-                                    dest=states.MANUALLY_PAUSED)
+                                    dest=states.MANUALLY_PAUSED, before='trigger_device_disconnect')
 
         logging.debug('Machine Setup Completed..')
 
@@ -47,13 +54,3 @@ class MusicMachine(object):
     def trigger_device_disconnect(self):
         logging.debug('Device Disconnected..Pausing Media..')
         self.player.pause_media()
-
-    def mobile_connected(self):
-        logging.debug('Music Machine..Device Connected.. Current State:' + str(self.machine.state))
-        self.machine.mobile_connected()
-        logging.debug('Music Machine..Device Connected Trigger Completed.. Current State:' + str(self.machine.state))
-
-    def mobile_disconnected(self):
-        logging.debug('Music Machine..Device Disconnected.. Current State:' + str(self.machine.state))
-        self.machine.mobile_disconnected()
-        logging.debug('Music Machine..Device Disconnected Trigger Completed.. Current State:' + str(self.machine.state))
