@@ -11,7 +11,7 @@ cffi==1.11.5
 chardet==3.0.4
 cleo==0.6.5
 click==6.7
-cryptography==2.2.2
+cryptography==3.2
 Faker==0.7.18
 idna==2.6
 inflection==0.3.1
