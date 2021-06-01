@@ -50,7 +50,7 @@ tldextract==2.2.0
 transitions==0.6.8
 triggers==0.0.3
 tzlocal==1.5.1
-urllib3==1.22
+urllib3==1.26.5
 validator.py==1.2.5
 waitress==1.1.0
 watchdog==0.8.3
